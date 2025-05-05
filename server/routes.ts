@@ -15,6 +15,7 @@ import { generateMatchPrediction } from "./ml/predictMatch";
 import { generatePlayerPerformancePrediction } from "./ml/predictPlayerPerformance";
 import { getExplanationFromOllama } from "./ml/ollama";
 import { scrapeLatestIPLData } from "./scraper/iplScraper";
+import { setupAuth } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API routes

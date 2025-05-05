@@ -11,6 +11,11 @@ import {
 } from "@shared/schema";
 
 // Storage interface
+import session from "express-session";
+import createMemoryStore from "memorystore";
+
+const MemoryStore = createMemoryStore(session);
+
 export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
@@ -64,6 +69,9 @@ export interface IStorage {
   // Chat message operations
   getChatMessagesByUser(userId: number): Promise<ChatMessage[]>;
   createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
+  
+  // Session store
+  sessionStore: session.Store;
 }
 
 export class MemStorage implements IStorage {
@@ -87,6 +95,9 @@ export class MemStorage implements IStorage {
   private currentPlayerPerformancePredictionId: number;
   private currentChatMessageId: number;
 
+  // Session store for authentication
+  sessionStore: session.Store;
+
   constructor() {
     this.users = new Map();
     this.teams = new Map();
@@ -107,6 +118,11 @@ export class MemStorage implements IStorage {
     this.currentPlayerPerformanceId = 1;
     this.currentPlayerPerformancePredictionId = 1;
     this.currentChatMessageId = 1;
+    
+    // Set up session store
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000, // prune expired entries every 24h
+    });
     
     // Initialize with some sample data
     this.initSampleData();
