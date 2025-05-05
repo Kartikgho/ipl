@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "wouter";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -47,13 +47,14 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const AuthPage = () => {
   const [activeTab, setActiveTab] = useState<string>("login");
   const { user, loginMutation, registerMutation } = useAuth();
-  const [_, navigate] = useNavigate();
+  const [_, navigate] = useLocation();
 
   // If user is already logged in, redirect to home page
-  if (user) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
